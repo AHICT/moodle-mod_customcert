@@ -52,6 +52,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
 
         // Another customcert activity that has no issued certificates.
         $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalledCount(2);
 
         // Create a user who will be issued a certificate.
         $user = $this->getDataGenerator()->create_user();
@@ -81,6 +82,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
         // The customcert activity the user will have an issue from.
         $customcert1 = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
         $customcert2 = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalledCount(2);
 
         // Call get_users_in_context() when the customcert hasn't any user.
         $cm = get_coursemodule_from_instance('customcert', $customcert1->id);
@@ -134,6 +136,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
         $course = $this->getDataGenerator()->create_course();
 
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -174,6 +177,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
 
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
         $customcert2 = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalledCount(2);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -215,6 +219,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
         $course = $this->getDataGenerator()->create_course();
 
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -260,6 +265,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
         $course = $this->getDataGenerator()->create_course();
         $customcert1 = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
         $customcert2 = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalledCount(2);
         $cm1 = get_coursemodule_from_instance('customcert', $customcert1->id);
         $cm2 = get_coursemodule_from_instance('customcert', $customcert2->id);
         $user1 = $this->getDataGenerator()->create_user();

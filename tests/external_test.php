@@ -135,6 +135,7 @@ final class external_test extends advanced_testcase {
 
         // Create a custom certificate in the course.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -175,6 +176,7 @@ final class external_test extends advanced_testcase {
 
         // Create a custom certificate in the course.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -208,6 +210,7 @@ final class external_test extends advanced_testcase {
 
         // Create a custom certificate in the course.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -241,6 +244,7 @@ final class external_test extends advanced_testcase {
         // Create course + certificate.
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create a student.
         $student = $this->getDataGenerator()->create_user();
@@ -269,6 +273,7 @@ final class external_test extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -300,6 +305,7 @@ final class external_test extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         $student = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($student->id, $course->id);
@@ -333,6 +339,7 @@ final class external_test extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         $student = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($student->id, $course->id);
@@ -368,6 +375,7 @@ final class external_test extends advanced_testcase {
     public function test_list_issues_no_capability(): void {
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Student without system capability.
         $student = $this->getDataGenerator()->create_user();

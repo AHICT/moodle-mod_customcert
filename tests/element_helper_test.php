@@ -62,6 +62,7 @@ final class element_helper_test extends advanced_testcase {
 
         // Create a custom certificate in the course.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Get the template to add elements to.
         $template = $DB->get_record('customcert_templates', ['contextid' => context_module::instance($customcert->cmid)->id]);
@@ -69,6 +70,7 @@ final class element_helper_test extends advanced_testcase {
 
         // Add a page to the template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to this page.
         $element = new \stdClass();
@@ -96,6 +98,7 @@ final class element_helper_test extends advanced_testcase {
 
         // Add a page to the template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to this page.
         $element = new \stdClass();
@@ -123,6 +126,7 @@ final class element_helper_test extends advanced_testcase {
 
         // Create a custom certificate in the course.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Get the template to add elements to.
         $template = $DB->get_record('customcert_templates', ['contextid' => context_module::instance($customcert->cmid)->id]);
@@ -130,6 +134,7 @@ final class element_helper_test extends advanced_testcase {
 
         // Add a page to the template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to this page.
         $element = new \stdClass();
@@ -160,6 +165,7 @@ final class element_helper_test extends advanced_testcase {
 
         // Add a page to the template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to this page.
         $element = new \stdClass();

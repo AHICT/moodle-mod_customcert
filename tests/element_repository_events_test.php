@@ -204,6 +204,9 @@ final class element_repository_events_test extends advanced_testcase {
         $this->assertGreaterThan(0, $newid);
         $this->assertCount(1, $events);
 
+        // Legacy add_page() call should have produced a debugging notice.
+        $this->assertDebuggingCalled();
+
         $event = reset($events);
         $this->assertInstanceOf('\\mod_customcert\\event\\element_created', $event);
         $this->assertEquals($newid, $event->objectid);
@@ -252,6 +255,6 @@ final class element_repository_events_test extends advanced_testcase {
         $this->assertInstanceOf('\\mod_customcert\\event\\element_updated', $event);
         $this->assertEquals($id, $event->objectid);
         $this->assertEquals(\context_system::instance()->id, $event->contextid);
-        $this->assertDebuggingNotCalled();
+        $this->assertDebuggingCalled();
     }
 }

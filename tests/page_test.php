@@ -60,6 +60,7 @@ final class page_test extends \advanced_testcase {
 
         // Add a second page and add an element to it.
         $page2id = $template->add_page();
+        $this->assertDebuggingCalled();
         $element = new \stdClass();
         $element->pageid = $page2id;
         $element->name = 'Image';
@@ -73,5 +74,33 @@ final class page_test extends \advanced_testcase {
 
         $records = $DB->count_records('customcert_pages', ['id' => $page2id]);
         $this->assertEquals(0, $records);
+    }
+
+    /**
+     * Service path: deleting a non-empty page should succeed without debugging notices.
+     *
+     * @covers \mod_customcert\service\template_service::delete_page
+     */
+    public function test_delete_non_empty_page_service(): void {
+        global $DB;
+
+        $template = \mod_customcert\template::create('Test name', \context_system::instance()->id);
+        $service = new \mod_customcert\service\template_service();
+
+        $page2id = $service->add_page($template);
+        $element = new \stdClass();
+        $element->pageid = $page2id;
+        $element->name = 'Image';
+        $element->element = 'image';
+        $DB->insert_record('customcert_elements', $element);
+
+        $service->delete_page($template, $page2id);
+
+        $records = $DB->count_records('customcert_elements', ['pageid' => $page2id]);
+        $this->assertEquals(0, $records);
+
+        $records = $DB->count_records('customcert_pages', ['id' => $page2id]);
+        $this->assertEquals(0, $records);
+        $this->assertDebuggingNotCalled();
     }
 }

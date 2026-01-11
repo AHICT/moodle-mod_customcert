@@ -48,9 +48,11 @@ final class form_handling_test extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
         $templatedata = $DB->get_record('customcert_templates', ['id' => $customcert->templateid]);
         $template = new template($templatedata);
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         $elementdata = (object) [
             'element' => 'text',

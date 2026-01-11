@@ -31,6 +31,8 @@ use mod_customcert\event\page_updated;
 use mod_customcert\event\template_created;
 use mod_customcert\event\template_deleted;
 use mod_customcert\event\template_updated;
+use mod_customcert\service\template_repository;
+use mod_customcert\service\template_service;
 use mod_customcert\local\preview_renderer;
 use mod_customcert\service\element_factory;
 use pdf;
@@ -65,212 +67,78 @@ class template {
      * @param stdClass $template
      */
     public function __construct($template) {
-        $this->id = $template->id;
+        $this->id = (int)$template->id;
         $this->name = $template->name;
-        $this->contextid = $template->contextid;
+        $this->contextid = (int)$template->contextid;
     }
 
     /**
      * Handles saving data.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::update instead
      * @param stdClass $data the template data
      */
     public function save($data) {
-        global $DB;
-
-        $savedata = new stdClass();
-        $savedata->id = $this->id;
-        $savedata->name = $data->name;
-        $savedata->timemodified = time();
-
-        $DB->update_record('customcert_templates', $savedata);
-
-        // Only trigger event if the name has changed.
-        if ($this->get_name() != $data->name) {
-            template_updated::create_from_template($this)->trigger();
-        }
+        debugging('template::save() is deprecated; use template_service::update() instead.', DEBUG_DEVELOPER);
+        $this->get_service()->update($this, $data);
     }
 
     /**
      * Handles adding another page to the template.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::add_page instead
      * @param bool $triggertemplateupdatedevent
      * @return int the id of the page
      */
     public function add_page(bool $triggertemplateupdatedevent = true) {
-        global $DB;
-
-        // Set the page number to 1 to begin with.
-        $sequence = 1;
-        // Get the max page number.
-        $sql = "SELECT MAX(sequence) as maxpage
-                  FROM {customcert_pages} cp
-                 WHERE cp.templateid = :templateid";
-        if ($maxpage = $DB->get_record_sql($sql, ['templateid' => $this->id])) {
-            $sequence = $maxpage->maxpage + 1;
-        }
-
-        // New page creation.
-        $page = new stdClass();
-        $page->templateid = $this->id;
-        $page->width = '210';
-        $page->height = '297';
-        $page->sequence = $sequence;
-        $page->timecreated = time();
-        $page->timemodified = $page->timecreated;
-
-        // Insert the page.
-        $pageid = $DB->insert_record('customcert_pages', $page);
-
-        $page->id = $pageid;
-
-        page_created::create_from_page($page, $this)->trigger();
-
-        if ($triggertemplateupdatedevent) {
-            template_updated::create_from_template($this)->trigger();
-        }
-
-        return $page->id;
+        debugging('template::add_page() is deprecated; use template_service::add_page() instead.', DEBUG_DEVELOPER);
+        return $this->get_service()->add_page($this, $triggertemplateupdatedevent);
     }
 
     /**
      * Handles saving page data.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::save_pages instead
      * @param stdClass $data the template data
      */
     public function save_page($data) {
-        global $DB;
-
-        // Set the time to a variable.
-        $time = time();
-
-        // Get the existing pages and save the page data.
-        if ($pages = $DB->get_records('customcert_pages', ['templateid' => $data->tid])) {
-            // Loop through existing pages.
-            foreach ($pages as $page) {
-                // Only update if there is a difference.
-                if ($this->has_page_been_updated($page, $data)) {
-                    $width = 'pagewidth_' . $page->id;
-                    $height = 'pageheight_' . $page->id;
-                    $leftmargin = 'pageleftmargin_' . $page->id;
-                    $rightmargin = 'pagerightmargin_' . $page->id;
-
-                    $p = new stdClass();
-                    $p->id = $page->id;
-                    $p->width = $data->$width;
-                    $p->height = $data->$height;
-                    $p->leftmargin = $data->$leftmargin;
-                    $p->rightmargin = $data->$rightmargin;
-                    $p->timemodified = $time;
-
-                    // Update the page.
-                    $DB->update_record('customcert_pages', $p);
-
-                    // Calling code is expected to trigger template_updated
-                    // after this method.
-                    page_updated::create_from_page($p, $this)->trigger();
-                }
-            }
-        }
+        debugging('template::save_page() is deprecated; use template_service::save_pages() instead.', DEBUG_DEVELOPER);
+        $this->get_service()->save_pages($this, $data);
     }
 
     /**
      * Handles deleting the template.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::delete instead
      * @return bool return true if the deletion was successful, false otherwise
      */
     public function delete() {
-        global $DB;
-
-        // Delete the pages.
-        if ($pages = $DB->get_records('customcert_pages', ['templateid' => $this->id])) {
-            foreach ($pages as $page) {
-                $this->delete_page($page->id, false);
-            }
-        }
-
-        // Now, finally delete the actual template.
-        if (!$DB->delete_records('customcert_templates', ['id' => $this->id])) {
-            return false;
-        }
-
-        template_deleted::create_from_template($this)->trigger();
-
-        return true;
+        debugging('template::delete() is deprecated; use template_service::delete() instead.', DEBUG_DEVELOPER);
+        return $this->get_service()->delete($this);
     }
 
     /**
      * Handles deleting a page from the template.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::delete_page instead
      * @param int $pageid the template page
      * @param bool $triggertemplateupdatedevent False if page is being deleted
      * during deletion of template.
      */
     public function delete_page(int $pageid, bool $triggertemplateupdatedevent = true): void {
-        global $DB;
-
-        // Get the page.
-        $page = $DB->get_record('customcert_pages', ['id' => $pageid], '*', MUST_EXIST);
-
-        // The element may have some extra tasks it needs to complete to completely delete itself.
-        if ($elements = $DB->get_records('customcert_elements', ['pageid' => $page->id])) {
-            foreach ($elements as $element) {
-                // Get an instance of the element class.
-                if ($e = element_factory::get_element_instance($element)) {
-                    $e->delete();
-                } else {
-                    // The plugin files are missing, so just remove the entry from the DB.
-                    $DB->delete_records('customcert_elements', ['id' => $element->id]);
-                }
-            }
-        }
-
-        // Delete this page.
-        $DB->delete_records('customcert_pages', ['id' => $page->id]);
-
-        page_deleted::create_from_page($page, $this)->trigger();
-
-        // Now we want to decrease the page number values of
-        // the pages that are greater than the page we deleted.
-        $sql = "UPDATE {customcert_pages}
-                   SET sequence = sequence - 1
-                 WHERE templateid = :templateid
-                   AND sequence > :sequence";
-        $DB->execute($sql, ['templateid' => $this->id, 'sequence' => $page->sequence]);
-
-        if ($triggertemplateupdatedevent) {
-            template_updated::create_from_template($this)->trigger();
-        }
+        debugging('template::delete_page() is deprecated; use template_service::delete_page() instead.', DEBUG_DEVELOPER);
+        $this->get_service()->delete_page($this, $pageid, $triggertemplateupdatedevent);
     }
 
     /**
      * Handles deleting an element from the template.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::delete_element instead
      * @param int $elementid the template page
      */
     public function delete_element($elementid) {
-        global $DB;
-
-        // Ensure element exists and delete it.
-        $element = $DB->get_record('customcert_elements', ['id' => $elementid], '*', MUST_EXIST);
-
-        // Get an instance of the element class.
-        if ($e = element_factory::get_element_instance($element)) {
-            $e->delete();
-        } else {
-            // The plugin files are missing, so just remove the entry from the DB.
-            $DB->delete_records('customcert_elements', ['id' => $elementid]);
-        }
-
-        // Now we want to decrease the sequence numbers of the elements
-        // that are greater than the element we deleted.
-        $sql = "UPDATE {customcert_elements}
-                   SET sequence = sequence - 1
-                 WHERE pageid = :pageid
-                   AND sequence > :sequence";
-        $DB->execute($sql, ['pageid' => $element->pageid, 'sequence' => $element->sequence]);
-
-        template_updated::create_from_template($this)->trigger();
+        debugging('template::delete_element() is deprecated; use template_service::delete_element() instead.', DEBUG_DEVELOPER);
+        $this->get_service()->delete_element($this, $elementid);
     }
 
     /**
@@ -480,96 +348,24 @@ class template {
      * Handles copying this template into another.
      *
      * @param object $copytotemplate The template instance to copy to
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::copy_to_template instead
      */
     public function copy_to_template($copytotemplate) {
-        global $DB;
-
-        $copytotemplateid = $copytotemplate->get_id();
-
-        // Get the pages for the template, there should always be at least one page for each template.
-        if ($templatepages = $DB->get_records('customcert_pages', ['templateid' => $this->id])) {
-            // Loop through the pages.
-            foreach ($templatepages as $templatepage) {
-                $page = clone($templatepage);
-                $page->templateid = $copytotemplateid;
-                $page->timecreated = time();
-                $page->timemodified = $page->timecreated;
-                // Insert into the database.
-                $page->id = $DB->insert_record('customcert_pages', $page);
-                \mod_customcert\event\page_created::create_from_page($page, $copytotemplate)->trigger();
-                // Now go through the elements we want to load.
-                if ($templateelements = $DB->get_records('customcert_elements', ['pageid' => $templatepage->id])) {
-                    foreach ($templateelements as $templateelement) {
-                        $element = clone($templateelement);
-                        $element->pageid = $page->id;
-                        $element->timecreated = time();
-                        $element->timemodified = $element->timecreated;
-                        // Ok, now we want to insert this into the database.
-                        $element->id = $DB->insert_record('customcert_elements', $element);
-                        // Load any other information the element may need to for the template.
-                        if ($e = element_factory::get_element_instance($element)) {
-                            if (!$e->copy_element($templateelement)) {
-                                // Failed to copy - delete the element.
-                                $e->delete();
-                            } else {
-                                element_created::create_from_element($e)->trigger();
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Trigger event if loading a template in a course module instance.
-            // (No event triggered if copying a system-wide template as
-            // create() triggers this).
-            if ($copytotemplate->get_context() != \context_system::instance()) {
-                \mod_customcert\event\template_updated::create_from_template($copytotemplate)->trigger();
-            }
-        }
+        debugging('template::copy_to_template() is deprecated; use template_service::copy_to_template() instead.', DEBUG_DEVELOPER);
+        $this->get_service()->copy_to_template($this, $copytotemplate);
     }
 
     /**
      * Handles moving an item on a template.
      *
+     * @deprecated since 5.2.0 Use \mod_customcert\service\template_service::move_item instead
      * @param string $itemname the item we are moving
      * @param int $itemid the id of the item
      * @param string $direction the direction
      */
     public function move_item($itemname, $itemid, $direction) {
-        global $DB;
-
-        $table = 'customcert_';
-        if ($itemname == 'page') {
-            $table .= 'pages';
-        } else { // Must be an element.
-            $table .= 'elements';
-        }
-
-        if ($moveitem = $DB->get_record($table, ['id' => $itemid])) {
-            // Check which direction we are going.
-            if ($direction == 'up') {
-                $sequence = $moveitem->sequence - 1;
-            } else { // Must be down.
-                $sequence = $moveitem->sequence + 1;
-            }
-
-            // Get the item we will be swapping with. Make sure it is related to the same template (if it's
-            // a page) or the same page (if it's an element).
-            if ($itemname == 'page') {
-                $params = ['templateid' => $moveitem->templateid];
-            } else { // Must be an element.
-                $params = ['pageid' => $moveitem->pageid];
-            }
-            $swapitem = $DB->get_record($table, $params + ['sequence' => $sequence]);
-        }
-
-        // Check that there is an item to move, and an item to swap it with.
-        if ($moveitem && !empty($swapitem)) {
-            $DB->set_field($table, 'sequence', $swapitem->sequence, ['id' => $moveitem->id]);
-            $DB->set_field($table, 'sequence', $moveitem->sequence, ['id' => $swapitem->id]);
-
-            \mod_customcert\event\template_updated::create_from_template($this)->trigger();
-        }
+        debugging('template::move_item() is deprecated; use template_service::move_item() instead.', DEBUG_DEVELOPER);
+        $this->get_service()->move_item($this, $itemname, $itemid, $direction);
     }
 
     /**
@@ -578,7 +374,7 @@ class template {
      * @return int the id of the template
      */
     public function get_id() {
-        return $this->id;
+        return (int)$this->id;
     }
 
     /**
@@ -639,20 +435,24 @@ class template {
      * @return template the template object
      */
     public static function create($templatename, $contextid) {
-        global $DB;
+        $repository = new template_repository();
+        $id = $repository->create((object) ['name' => $templatename, 'contextid' => $contextid]);
+        $record = $repository->get_by_id_or_fail($id);
 
-        $template = new stdClass();
-        $template->name = $templatename;
-        $template->contextid = $contextid;
-        $template->timecreated = time();
-        $template->timemodified = $template->timecreated;
-        $template->id = $DB->insert_record('customcert_templates', $template);
-
-        $template = new template($template);
+        $template = new template($record);
 
         template_created::create_from_template($template)->trigger();
 
         return $template;
+    }
+
+    /**
+     * Lazily build a template_service instance.
+     *
+     * @return template_service
+     */
+    private function get_service(): template_service {
+        return new template_service();
     }
 
     /**

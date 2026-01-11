@@ -69,6 +69,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Create a custom certificate with no elements.
         $this->getDataGenerator()->create_module('customcert', ['course' => $course->id, 'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         // Enrol the user as a student.
         $this->getDataGenerator()->enrol_user($user1->id, $course->id);
@@ -108,6 +109,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id, 'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -118,6 +120,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -163,6 +166,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id,
             'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -173,6 +177,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -240,6 +245,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $SITE->id,
             'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         $role = $DB->get_record('role', ['archetype' => 'user']);
         role_change_permission($role->id, context_module::instance($customcert->cmid), 'mod/customcert:view', CAP_ALLOW);
@@ -254,6 +260,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -332,6 +339,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id,
             'emailteachers' => 1]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -342,6 +350,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -388,6 +397,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id,
             'emailothers' => 'testcustomcert@example.com, doo@dah']);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -398,6 +408,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -442,6 +453,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id, 'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -452,6 +464,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -500,6 +513,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id, 'emailstudents' => 1,
             'requiredtime' => '60']);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -510,6 +524,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -582,6 +597,7 @@ final class email_certificate_task_test extends advanced_testcase {
                 ],
             ),
         ]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -592,6 +608,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -668,6 +685,7 @@ final class email_certificate_task_test extends advanced_testcase {
                 ],
             ),
         ]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -678,6 +696,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -729,6 +748,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id,
             'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         // Create template object.
         $template = new stdClass();
@@ -739,6 +759,7 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page to this template.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
 
         // Add an element to the page.
         $element = new stdClass();
@@ -827,6 +848,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Create a custom certificate module with emailing enabled for students.
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id,
             'emailstudents' => 1]);
+        $this->assertDebuggingCalled();
 
         // Set up a basic certificate template.
         $template = new \stdClass();
@@ -837,6 +859,8 @@ final class email_certificate_task_test extends advanced_testcase {
 
         // Add a page and an element to put the certificate in a valid state.
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
+
         $element = new \stdClass();
         $element->pageid = $pageid;
         $element->name = 'Test Element';
@@ -925,6 +949,7 @@ final class email_certificate_task_test extends advanced_testcase {
         // Minimal valid customcert (with one element) so the customcert lookup succeeds.
         $course = $this->getDataGenerator()->create_course();
         $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->assertDebuggingCalled();
 
         // Make the template valid.
         $template = new \stdClass();
@@ -933,6 +958,8 @@ final class email_certificate_task_test extends advanced_testcase {
         $template->contextid = \context_course::instance($course->id)->id;
         $template = new \mod_customcert\template($template);
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
+
         $DB->insert_record('customcert_elements', (object)['pageid' => $pageid, 'name' => 'E']);
 
         $sink = $this->redirectEmails();
@@ -979,6 +1006,7 @@ final class email_certificate_task_test extends advanced_testcase {
             'emailstudents' => 1, // Only students should receive.
             'emailteachers' => 1, // Teachers get notified *about* students, but should not receive their own cert.
         ]);
+        $this->assertDebuggingCalled();
 
         // Create valid template.
         $template = new \stdClass();
@@ -988,6 +1016,8 @@ final class email_certificate_task_test extends advanced_testcase {
         $template = new template($template);
 
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
+
         $DB->insert_record('customcert_elements', (object)[
             'pageid' => $pageid,
             'name' => 'ElementX',
@@ -1067,6 +1097,7 @@ final class email_certificate_task_test extends advanced_testcase {
             'course' => $course->id,
             'emailstudents' => 1,
         ]);
+        $this->assertDebuggingCalled();
 
         // Create valid template (one element).
         $template = new \stdClass();
@@ -1076,6 +1107,7 @@ final class email_certificate_task_test extends advanced_testcase {
         $template = new template($template);
 
         $pageid = $template->add_page();
+        $this->assertDebuggingCalled();
         $DB->insert_record('customcert_elements', (object)[
             'pageid' => $pageid,
             'name' => 'ElementX',
